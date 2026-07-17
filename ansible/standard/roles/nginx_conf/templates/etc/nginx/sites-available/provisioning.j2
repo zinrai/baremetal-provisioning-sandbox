@@ -1,0 +1,27 @@
+# baremetal-provisioning-sandbox HTTP front.
+#
+# Single base URL for the booting node:
+#   /images/...  -> static files placed by metal-bootstrap (kernel, initrd)
+#   /configs/... -> reverse proxied to metal-install (per-node artifacts)
+#   /nodes       -> reverse proxied to metal-install (completion DELETE)
+#   /bootstrap.ipxe -> static, chained to by fleet-dhcpd's boot_url
+
+server {
+    listen 80 default_server;
+    server_name _;
+
+    root {{ nginx_conf.docroot }};
+
+    location /configs/ {
+        proxy_pass http://{{ nginx_conf.metal_install_addr }};
+    }
+
+    location /nodes {
+        proxy_pass http://{{ nginx_conf.metal_install_addr }};
+    }
+
+    location / {
+        autoindex on;
+        try_files $uri $uri/ =404;
+    }
+}

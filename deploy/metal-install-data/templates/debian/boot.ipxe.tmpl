@@ -1,0 +1,18 @@
+#!ipxe
+# Boot script for Debian Installer.
+# Rendered per-node by the render command.
+
+dhcp
+
+kernel {{ .Env.InstallServer.HTTPBase }}/{{ .OS.BootImage.Kernel }} \
+  auto=true \
+  priority=critical \
+  url={{ .Env.InstallServer.HTTPBase }}/configs/{{ .Spec.NodeID }}/preseed.cfg \
+  interface=auto \
+  netcfg/dhcp_timeout=60 \
+  {{ range .Machine.KernelParams }}{{ . }} {{ end }} \
+  ---
+
+initrd {{ .Env.InstallServer.HTTPBase }}/{{ .OS.BootImage.Initrd }}
+
+boot

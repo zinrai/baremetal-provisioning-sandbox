@@ -1,0 +1,23 @@
+#!ipxe
+# Boot script for Ubuntu autoinstall (Subiquity).
+# Rendered per-node by the render command.
+#
+# url= points casper at the live-server ISO (OS.BootImage.Repo is the full
+# path to it): casper fetches the ISO and mounts the squashfs from it, so the
+# guest needs enough RAM to hold the ISO plus the installer working set.
+# ds=nocloud-net;s=<dir>/ points cloud-init at the directory holding both
+# user-data and meta-data (trailing slash required).
+
+dhcp
+
+kernel {{ .Env.InstallServer.HTTPBase }}/{{ .OS.BootImage.Kernel }} \
+  autoinstall \
+  ds=nocloud-net;s={{ .Env.InstallServer.HTTPBase }}/configs/{{ .Spec.NodeID }}/ \
+  url={{ .Env.InstallServer.HTTPBase }}/{{ .OS.BootImage.Repo }} \
+  ip=dhcp \
+  {{ range .Machine.KernelParams }}{{ . }} {{ end }} \
+  ---
+
+initrd {{ .Env.InstallServer.HTTPBase }}/{{ .OS.BootImage.Initrd }}
+
+boot

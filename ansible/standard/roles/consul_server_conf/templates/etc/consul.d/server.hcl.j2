@@ -1,0 +1,15 @@
+node_name        = "{{ inventory_hostname }}"
+server           = true
+bootstrap_expect = {{ consul_server_conf.bootstrap_expect }}
+
+# bind to this container's static bridge address (from the inventory).
+# data_dir / client_addr come from the package's /etc/consul.d/consul.hcl.
+bind_addr      = "{{ ansible_host }}"
+advertise_addr = "{{ ansible_host }}"
+
+retry_join = {{ consul_retry_join | to_json }}
+
+telemetry {
+  prometheus_retention_time = "24h"
+  disable_hostname          = true
+}

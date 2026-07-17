@@ -1,0 +1,8 @@
+---
+- name: Ensure consul is enabled and started
+  ansible.builtin.service:
+    name: consul
+    enabled: true
+    state: started
+  tags:
+    - consul_enable

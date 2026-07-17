@@ -1,0 +1,5 @@
+---
+metal_install:
+  version: "0.1.0"
+  url: "https://github.com/zinrai/metal-install/releases/download/v0.1.0/metal-install_0.1.0_linux_amd64"
+  bin: "/usr/local/bin/metal-install"

@@ -1,0 +1,12 @@
+[Unit]
+Description=metal-install server (renders and serves per-node install artifacts)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart={{ metal_install.bin }} server -data-dir {{ metal_install_conf.data_dir }} -state-dir {{ metal_install_conf.state_dir }} -listen {{ metal_install_conf.listen }}
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

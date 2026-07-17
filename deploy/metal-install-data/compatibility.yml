@@ -1,0 +1,5 @@
+# Valid (machine, os) combinations.
+# The QEMU stand-in installs each of these.
+
+- machines: [qemu_vm]
+  os: [debian13, almalinux100, ubuntu2404]

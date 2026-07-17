@@ -1,0 +1,20 @@
+#!ipxe
+# Chained from fleet-dhcpd's boot_url. Expands this node's MAC and fetches the
+# per-node boot script rendered by metal-install. node_id convention is the MAC
+# in lowercase hyphen form (${mac:hexhyp}, e.g. 52-54-00-aa-bb-cc).
+
+set boot_url http://{{ ansible_host }}/configs/${mac:hexhyp}/boot.ipxe
+
+echo
+echo baremetal-provisioning-sandbox bootstrap
+echo MAC      : ${mac}
+echo Boot URL : ${boot_url}
+echo
+
+chain ${boot_url} || goto failure
+
+:failure
+echo Failed to fetch ${boot_url}
+echo No installation pending for this MAC, or server unreachable. Local boot in 5s.
+sleep 5
+exit

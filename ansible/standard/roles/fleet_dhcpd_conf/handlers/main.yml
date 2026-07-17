@@ -1,0 +1,7 @@
+---
+- name: restart fleet-dhcpd
+  ansible.builtin.service:
+    name: fleet-dhcpd
+    state: restarted
+  tags:
+    - fleet_dhcpd_conf

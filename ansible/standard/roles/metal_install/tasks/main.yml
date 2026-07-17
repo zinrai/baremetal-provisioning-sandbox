@@ -1,0 +1,11 @@
+---
+- name: Ensure metal-install binary is installed
+  ansible.builtin.get_url:
+    url: "{{ metal_install.url }}"
+    dest: "{{ metal_install.bin }}"
+    owner: root
+    group: root
+    mode: "0755"
+    force: false
+  tags:
+    - metal_install

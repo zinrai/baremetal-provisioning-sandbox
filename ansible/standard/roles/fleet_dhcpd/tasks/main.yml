@@ -1,0 +1,11 @@
+---
+- name: Ensure fleet-dhcpd binary is installed
+  ansible.builtin.get_url:
+    url: "{{ fleet_dhcpd.url }}"
+    dest: "{{ fleet_dhcpd.bin }}"
+    owner: root
+    group: root
+    mode: "0755"
+    force: false
+  tags:
+    - fleet_dhcpd

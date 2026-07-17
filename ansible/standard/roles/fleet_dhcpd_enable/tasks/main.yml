@@ -1,0 +1,9 @@
+---
+- name: Ensure fleet-dhcpd is enabled and started
+  ansible.builtin.systemd:
+    name: fleet-dhcpd
+    enabled: true
+    state: started
+    daemon_reload: true
+  tags:
+    - fleet_dhcpd_enable

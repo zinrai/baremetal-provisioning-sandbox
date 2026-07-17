@@ -1,0 +1,31 @@
+---
+- name: Ensure dependencies for apt over https are installed
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+    state: present
+  tags:
+    - apt_hashicorp_repository
+
+- name: Ensure HashiCorp apt signing key is installed
+  ansible.builtin.get_url:
+    url: "{{ apt_hashicorp_repository.key_url }}"
+    dest: "{{ apt_hashicorp_repository.keyring }}"
+    mode: "0644"
+    force: false
+  tags:
+    - apt_hashicorp_repository
+
+# update_cache stays here (the apt_update role can't cover it): it refreshes the
+# cache for the repo this task just added, which did not exist at play start.
+- name: Ensure HashiCorp apt repository is configured
+  ansible.builtin.apt_repository:
+    repo: "{{ apt_hashicorp_repository.repo }}"
+    filename: "hashicorp"
+    state: present
+    update_cache: true
+  tags:
+    - apt_hashicorp_repository

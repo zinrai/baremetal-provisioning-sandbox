@@ -1,0 +1,32 @@
+# Debian 13 (trixie)
+
+family: debian
+version: "13"
+
+# kernel and initrd are fetched from the install server. Debian installs from
+# an online mirror (set in the preseed), so no local package tree is served.
+boot_image:
+  kernel: images/debian/13/install.amd/linux
+  initrd: images/debian/13/install.amd/initrd.gz
+  repo: images/debian/13/
+
+boot_template: templates/debian/boot.ipxe.tmpl
+
+configs:
+  - template: templates/debian/preseed.cfg.tmpl
+    filename: preseed.cfg
+
+packages:
+  - openssh-server
+  - curl
+
+exclude_packages: []
+
+timezone: Asia/Tokyo
+ntp_server: ntp.nict.jp
+keyboard: jp
+language: en_US.UTF-8
+
+setup:
+  post:
+    - templates/setup/post/ssh.sh.tmpl

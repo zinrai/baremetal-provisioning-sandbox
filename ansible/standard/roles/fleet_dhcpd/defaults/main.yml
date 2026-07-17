@@ -1,0 +1,7 @@
+---
+fleet_dhcpd:
+  version: "0.1.0"
+  # goreleaser publishes a raw binary asset (archives.format = binary):
+  #   <name>_<version>_<os>_<arch>
+  url: "https://github.com/zinrai/fleet-dhcpd/releases/download/v0.1.0/fleet-dhcpd_0.1.0_linux_amd64"
+  bin: "/usr/local/bin/fleet-dhcpd"

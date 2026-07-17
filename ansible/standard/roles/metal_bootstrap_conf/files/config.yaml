@@ -1,0 +1,33 @@
+targets:
+  - name: almalinux-10
+    files:
+      - url: https://repo.almalinux.org/almalinux/10/BaseOS/x86_64/os/images/pxeboot/vmlinuz
+        dest: /var/www/html/images/almalinux/10.0/images/pxeboot/vmlinuz
+        sha256: 90ee8394588e78eed5136fa484a2b49c6a9e70960356b046c1b90a5a6f449f7d
+      - url: https://repo.almalinux.org/almalinux/10/BaseOS/x86_64/os/images/pxeboot/initrd.img
+        dest: /var/www/html/images/almalinux/10.0/images/pxeboot/initrd.img
+        sha256: e1b5b7f627a0d2982981521e3dd550a8f51e40d08b3e9318763d2c7ce273b3a9
+
+  - name: ubuntu-24.04
+    files:
+      - url: https://releases.ubuntu.com/24.04/ubuntu-24.04.3-live-server-amd64.iso
+        dest: /var/www/html/images/ubuntu/24.04/ubuntu-24.04.3-live-server-amd64.iso
+        sha256: c3514bf0056180d09376462a7a1b4f213c1d6e8ea67fae5c25099c6fd3d8274b
+    # The casper kernel/initrd live only inside the ISO. metal-bootstrap reads
+    # them out directly (no loop mount), so this runs in the artifact LXC.
+    iso:
+      - from: /var/www/html/images/ubuntu/24.04/ubuntu-24.04.3-live-server-amd64.iso
+        src: casper/vmlinuz
+        dest: /var/www/html/images/ubuntu/24.04/casper/vmlinuz
+      - from: /var/www/html/images/ubuntu/24.04/ubuntu-24.04.3-live-server-amd64.iso
+        src: casper/initrd
+        dest: /var/www/html/images/ubuntu/24.04/casper/initrd
+
+  - name: debian-13
+    files:
+      - url: http://ftp.debian.org/debian/dists/trixie/main/installer-amd64/current/images/netboot/debian-installer/amd64/linux
+        dest: /var/www/html/images/debian/13/install.amd/linux
+        sha256: 4cc864b8e34c86c281f66b36157a52945a95a1b290762245c608b7c7e3934a11
+      - url: http://ftp.debian.org/debian/dists/trixie/main/installer-amd64/current/images/netboot/debian-installer/amd64/initrd.gz
+        dest: /var/www/html/images/debian/13/install.amd/initrd.gz
+        sha256: 53376f70d695276c5d9c903589348a966d0f57dc0bbd6a701d4a97300761ba40

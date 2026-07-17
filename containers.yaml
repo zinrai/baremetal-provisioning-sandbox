@@ -1,0 +1,78 @@
+# baremetal-provisioning-sandbox container topology, for github.com/zinrai/declxc
+#
+#   sudo declxc create  -f containers.yaml
+#   sudo declxc start   -f containers.yaml
+#   sudo declxc stop    -f containers.yaml
+#   sudo declxc destroy -f containers.yaml
+#
+# 3 Consul servers + 3 fleet-dhcpd + 1 metal-install + 1 artifact, all on the
+# provisioning bridge (prov0, 10.0.10.1/24) with static IPs. declxc does not
+# provision inside the container; Ansible does that (see ansible/). The bridge
+# is a host prerequisite created with github.com/zinrai/netshed (network.yaml).
+# SSH access for Ansible is seeded into each rootfs with
+# github.com/zinrai/deb-rootfs while the containers are stopped.
+
+containers:
+  - name: consul-server-0
+    lxc_create_args: -t debian -- -r bookworm -a amd64
+    networks:
+      - type: veth
+        interface: prov0
+        ipv4_address: 10.0.10.11/24
+        ipv4_gateway: 10.0.10.1
+
+  - name: consul-server-1
+    lxc_create_args: -t debian -- -r bookworm -a amd64
+    networks:
+      - type: veth
+        interface: prov0
+        ipv4_address: 10.0.10.12/24
+        ipv4_gateway: 10.0.10.1
+
+  - name: consul-server-2
+    lxc_create_args: -t debian -- -r bookworm -a amd64
+    networks:
+      - type: veth
+        interface: prov0
+        ipv4_address: 10.0.10.13/24
+        ipv4_gateway: 10.0.10.1
+
+  - name: fleet-dhcpd-0
+    lxc_create_args: -t debian -- -r bookworm -a amd64
+    networks:
+      - type: veth
+        interface: prov0
+        ipv4_address: 10.0.10.21/24
+        ipv4_gateway: 10.0.10.1
+
+  - name: fleet-dhcpd-1
+    lxc_create_args: -t debian -- -r bookworm -a amd64
+    networks:
+      - type: veth
+        interface: prov0
+        ipv4_address: 10.0.10.22/24
+        ipv4_gateway: 10.0.10.1
+
+  - name: fleet-dhcpd-2
+    lxc_create_args: -t debian -- -r bookworm -a amd64
+    networks:
+      - type: veth
+        interface: prov0
+        ipv4_address: 10.0.10.23/24
+        ipv4_gateway: 10.0.10.1
+
+  - name: metal-install
+    lxc_create_args: -t debian -- -r bookworm -a amd64
+    networks:
+      - type: veth
+        interface: prov0
+        ipv4_address: 10.0.10.31/24
+        ipv4_gateway: 10.0.10.1
+
+  - name: artifact
+    lxc_create_args: -t debian -- -r bookworm -a amd64
+    networks:
+      - type: veth
+        interface: prov0
+        ipv4_address: 10.0.10.41/24
+        ipv4_gateway: 10.0.10.1

@@ -1,0 +1,61 @@
+# QEMU VM standing in for a physical server.
+#
+# A VM has no fixed PCI-to-NIC mapping and no bonding, so nics/bonds are
+# empty. The installer uses DHCP on the provisioning network (d-i netcfg auto,
+# kickstart network --bootproto=dhcp, subiquity's default). The disk is virtio
+# (/dev/vda).
+#
+# The VM boots SeaBIOS (legacy BIOS), so the layout is an msdos label with no
+# EFI System Partition, and grub-installer/bootdev pins GRUB to /dev/vda. A GPT
+# + ESP layout would leave grub-installer with no BIOS boot target and stop at
+# an interactive device prompt.
+
+bmc_type: none
+
+nics: []
+bonds: []
+unused_nics: []
+
+# Serial console so the install can be watched with `qemu ... -nographic`.
+# ttyS0 is listed last so it is the primary console (/dev/console): anaconda and
+# Subiquity render their UI on the primary console, and -nographic only shows
+# the serial one. tty0 (VGA) is invisible under -nographic.
+kernel_params:
+  - console=tty0
+  - console=ttyS0,115200
+
+extra_packages: []
+
+partition:
+  preseed: |
+    d-i partman-auto/disk string /dev/vda
+    d-i partman-auto/method string regular
+    d-i partman-auto/expert_recipe string                         \
+      boot-root ::                                                \
+        1024 1024 1024 ext4                                       \
+          $primary{ } $bootable{ }                                \
+          method{ format } format{ }                             \
+          use_filesystem{ } filesystem{ ext4 }                    \
+          mountpoint{ /boot } .                                   \
+        1024 1024 1024 linux-swap                                 \
+          method{ swap } format{ } .                              \
+        -1   1000 -1   ext4                                       \
+          $primary{ }                                             \
+          method{ format } format{ }                             \
+          use_filesystem{ } filesystem{ ext4 }                    \
+          mountpoint{ / } .
+    d-i partman-partitioning/confirm_write_new_label boolean true
+    d-i partman/choose_partition select finish
+    d-i partman/confirm boolean true
+    d-i partman/confirm_nooverwrite boolean true
+    d-i grub-installer/bootdev string /dev/vda
+  kickstart: |
+    clearpart --all --initlabel --drives=vda
+    part biosboot --fstype=biosboot --size=1 --ondisk=vda
+    part /boot --fstype=xfs --size=1024 --ondisk=vda
+    part swap --size=2048 --ondisk=vda
+    part / --fstype=xfs --grow --ondisk=vda
+  autoinstall: |
+    storage:
+      layout:
+        name: direct

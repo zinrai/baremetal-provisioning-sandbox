@@ -1,0 +1,3 @@
+---
+metal_bootstrap_conf:
+  config: "/etc/metal-bootstrap/config.yaml"

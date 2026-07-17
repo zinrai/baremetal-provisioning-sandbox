@@ -1,0 +1,12 @@
+---
+metal_install_conf:
+  # The server's -data-dir is the `current` symlink the deploy layer flips
+  # between releases (deploy/deploy-metal-install-data.sh).
+  data_dir: "/opt/metal-install/current"
+  # Shared config Ansible owns, symlinked into each release as <release>/env.yml.
+  shared_dir: "/opt/metal-install/shared"
+  state_dir: "/var/lib/metal-install"
+  listen: ":8080"
+  # Single HTTP front (artifact node nginx): serves /images and reverse
+  # proxies /configs and /nodes back to this server.
+  http_base: "http://10.0.10.41"

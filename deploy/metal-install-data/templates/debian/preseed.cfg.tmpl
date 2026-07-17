@@ -1,0 +1,65 @@
+# Preseed for Debian Installer.
+# Rendered per-node. Declarations only; post-install logic lives in
+# scripts that are fetched and executed via late_command.
+
+# --- Locale and keyboard ----
+
+d-i debian-installer/locale string {{ .OS.Language }}
+d-i keyboard-configuration/xkb-keymap select {{ .OS.Keyboard }}
+
+# --- Network ----
+
+d-i netcfg/choose_interface select auto
+d-i netcfg/dhcp_timeout string 60
+
+# --- Mirror ----
+
+d-i mirror/country string manual
+d-i mirror/http/hostname string deb.debian.org
+d-i mirror/http/directory string /debian
+d-i mirror/http/proxy string
+
+# --- Root password ----
+
+d-i passwd/root-login boolean true
+d-i passwd/root-password-crypted password {{ .Spec.RootPasswordHash }}
+d-i passwd/make-user boolean false
+
+# --- Time ----
+
+d-i clock-setup/utc boolean true
+d-i time/zone string {{ .OS.Timezone }}
+d-i clock-setup/ntp boolean true
+d-i clock-setup/ntp-server string {{ .OS.NTPServer }}
+
+# --- Partitioning ----
+
+{{ .Machine.Partition.Preseed }}
+
+# --- Packages ----
+
+tasksel tasksel/first multiselect
+d-i pkgsel/include string {{ range .OS.Packages }}{{ . }} {{ end }}
+d-i pkgsel/upgrade select none
+d-i pkgsel/install-recommends boolean false
+
+# --- Boot loader ----
+
+d-i grub-installer/only_debian boolean true
+d-i grub-installer/with_other_os boolean true
+
+# --- Finish ----
+#
+# Power off when the install finishes.
+
+d-i finish-install/reboot_in_progress note
+d-i debian-installer/exit/poweroff boolean true
+
+# --- Late command: fetch and execute post-install scripts ----
+#
+# preseed/late_command is a single line; each `in-target` invocation
+# runs one command inside the chroot of the freshly installed system.
+# Add more `in-target` clauses for additional post steps.
+
+d-i preseed/late_command string \
+  in-target sh -c "curl -fsSL {{ .Env.InstallServer.HTTPBase }}/configs/{{ .Spec.NodeID }}/post/ssh.sh | sh"

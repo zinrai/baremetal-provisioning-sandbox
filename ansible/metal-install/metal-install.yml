@@ -1,0 +1,8 @@
+---
+- hosts: metal_install
+  become: true
+  roles:
+    - apt_update
+    - metal_install
+    - metal_install_conf
+    - metal_install_enable

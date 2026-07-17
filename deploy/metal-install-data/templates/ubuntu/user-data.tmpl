@@ -1,0 +1,39 @@
+#cloud-config
+# Autoinstall for Ubuntu Server (Subiquity).
+# Rendered per-node. Declarations only; post-install logic lives in
+# post-install scripts that are fetched and executed via late-commands.
+
+autoinstall:
+  version: 1
+
+  # Power off when the install finishes.
+  shutdown: poweroff
+
+  locale: {{ .OS.Language }}
+  keyboard:
+    layout: {{ .OS.Keyboard }}
+
+  identity:
+    hostname: {{ .Spec.NodeID }}
+    username: root
+    password: '{{ .Spec.RootPasswordHash }}'
+
+  ssh:
+    install-server: true
+    allow-pw: false
+    authorized-keys:
+{{- range .Spec.SSHKeys }}
+      - "{{ . }}"
+{{- end }}
+
+  packages:
+{{- range .OS.Packages }}
+    - {{ . }}
+{{- end }}
+
+  timezone: {{ .OS.Timezone }}
+
+{{ indent 2 .Machine.Partition.Autoinstall }}
+
+  late-commands:
+    - curtin in-target -- sh -c "curl -fsSL {{ .Env.InstallServer.HTTPBase }}/configs/{{ .Spec.NodeID }}/post/ssh.sh | sh"

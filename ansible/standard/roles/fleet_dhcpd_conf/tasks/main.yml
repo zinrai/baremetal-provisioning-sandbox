@@ -1,0 +1,35 @@
+---
+# The DHCP configuration is cluster-wide state in Consul KV, so it is written
+# once from a single node. Every fleet-dhcpd instance reads it on startup and
+# reloads on change.
+- name: Ensure fleet-dhcpd config is present in Consul KV
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:8500/v1/kv/{{ fleet_dhcpd_conf.kv_prefix }}/config"
+    method: PUT
+    body: "{{ fleet_dhcpd_kv_config | to_json }}"
+    body_format: json
+    status_code: 200
+  vars:
+    fleet_dhcpd_kv_config:
+      subnet: "{{ fleet_dhcpd_conf.subnet }}"
+      range_start: "{{ fleet_dhcpd_conf.range_start }}"
+      range_end: "{{ fleet_dhcpd_conf.range_end }}"
+      router: "{{ fleet_dhcpd_conf.router }}"
+      dns: "{{ fleet_dhcpd_conf.dns }}"
+      lease_time: "{{ fleet_dhcpd_conf.lease_time }}"
+      boot_url: "{{ fleet_dhcpd_conf.boot_url }}"
+  run_once: true
+  tags:
+    - fleet_dhcpd_conf
+
+- name: Ensure fleet-dhcpd systemd unit is installed
+  ansible.builtin.template:
+    src: "etc/systemd/system/fleet-dhcpd.service.j2"
+    dest: "/etc/systemd/system/fleet-dhcpd.service"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - restart fleet-dhcpd
+  tags:
+    - fleet_dhcpd_conf

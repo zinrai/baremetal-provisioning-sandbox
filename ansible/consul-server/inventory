@@ -1,0 +1,10 @@
+[consul_server]
+consul-server-0 ansible_host=10.0.10.11
+consul-server-1 ansible_host=10.0.10.12
+consul-server-2 ansible_host=10.0.10.13
+
+[consul_server:vars]
+ansible_user=root
+
+[consul_cluster:children]
+consul_server

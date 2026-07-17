@@ -1,0 +1,12 @@
+---
+- hosts: fleet_dhcpd
+  become: true
+  roles:
+    - apt_update
+    - apt_hashicorp_repository
+    - consul
+    - consul_client_conf
+    - consul_enable
+    - fleet_dhcpd
+    - fleet_dhcpd_conf
+    - fleet_dhcpd_enable

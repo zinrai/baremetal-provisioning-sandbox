@@ -1,0 +1,11 @@
+---
+# serial: 1 applies one server at a time, keeping the Raft quorum whole.
+- hosts: consul_server
+  become: true
+  serial: 1
+  roles:
+    - apt_update
+    - apt_hashicorp_repository
+    - consul
+    - consul_server_conf
+    - consul_enable

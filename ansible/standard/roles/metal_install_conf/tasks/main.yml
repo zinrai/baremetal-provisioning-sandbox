@@ -1,0 +1,39 @@
+---
+- name: Ensure metal-install directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - "{{ metal_install_conf.shared_dir }}"
+    - "{{ metal_install_conf.state_dir }}"
+  tags:
+    - metal_install_conf
+
+# env.yml is the shared config: Ansible owns it, the deploy layer symlinks it
+# into each release. The server reads it as <data_dir>/env.yml, where data_dir
+# is the `current` symlink the deploy layer maintains.
+- name: Ensure shared env.yml matches this deployment
+  ansible.builtin.template:
+    src: "env.yml.j2"
+    dest: "{{ metal_install_conf.shared_dir }}/env.yml"
+    owner: root
+    group: root
+    mode: "0644"
+  tags:
+    - metal_install_conf
+
+# Starting and restarting metal-install is the deploy layer's job (it owns the
+# `current` symlink the server reads from), so this places the unit without
+# notifying a restart.
+- name: Ensure metal-install systemd unit is installed
+  ansible.builtin.template:
+    src: "etc/systemd/system/metal-install.service.j2"
+    dest: "/etc/systemd/system/metal-install.service"
+    owner: root
+    group: root
+    mode: "0644"
+  tags:
+    - metal_install_conf

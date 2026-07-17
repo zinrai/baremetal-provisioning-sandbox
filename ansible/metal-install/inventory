@@ -1,0 +1,5 @@
+[metal_install]
+metal-install ansible_host=10.0.10.31
+
+[metal_install:vars]
+ansible_user=root

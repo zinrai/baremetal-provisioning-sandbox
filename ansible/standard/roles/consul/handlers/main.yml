@@ -1,0 +1,14 @@
+---
+- name: restart consul
+  ansible.builtin.service:
+    name: consul
+    state: restarted
+  tags:
+    - consul
+
+- name: reload consul
+  ansible.builtin.service:
+    name: consul
+    state: reloaded
+  tags:
+    - consul

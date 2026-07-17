@@ -1,0 +1,17 @@
+---
+- name: Ensure consul version is pinned
+  ansible.builtin.template:
+    src: "etc/apt/preferences.d/consul.j2"
+    dest: "/etc/apt/preferences.d/consul"
+    owner: root
+    group: root
+    mode: "0644"
+  tags:
+    - consul
+
+- name: Ensure consul is installed
+  ansible.builtin.apt:
+    name: "consul={{ consul.version }}*"
+    state: present
+  tags:
+    - consul

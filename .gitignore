@@ -1,0 +1,6 @@
+# Python bytecode from driver/
+__pycache__/
+*.pyc
+
+# QEMU guest disks from install verification
+*.qcow2

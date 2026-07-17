@@ -1,0 +1,14 @@
+[Unit]
+Description=fleet-dhcpd (HA DHCP for iPXE provisioning)
+After=network-online.target consul.service
+Wants=network-online.target
+Requires=consul.service
+
+[Service]
+# Runs as root inside the container: binds UDP/67 and opens a raw socket.
+ExecStart={{ fleet_dhcpd.bin }} -kv-prefix {{ fleet_dhcpd_conf.kv_prefix }} -interface {{ fleet_dhcpd_conf.interface }}
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

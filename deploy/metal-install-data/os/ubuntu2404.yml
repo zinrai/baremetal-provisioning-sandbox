@@ -1,0 +1,38 @@
+# Ubuntu 24.04 LTS (noble), live-server autoinstall (Subiquity)
+
+family: ubuntu
+version: "24.04"
+
+# casper kernel and initrd are extracted from the live-server ISO and served
+# from the install server. repo is the full path to the ISO itself: the boot
+# template passes it as url= so casper fetches the live filesystem (the
+# squashfs) from it. Keeping the ISO filename here (not in the template) means
+# a point-release bump is a one-line data change.
+boot_image:
+  kernel: images/ubuntu/24.04/casper/vmlinuz
+  initrd: images/ubuntu/24.04/casper/initrd
+  repo: images/ubuntu/24.04/ubuntu-24.04.3-live-server-amd64.iso
+
+boot_template: templates/ubuntu/boot.ipxe.tmpl
+
+configs:
+  - template: templates/ubuntu/user-data.tmpl
+    filename: user-data
+  - template: templates/ubuntu/meta-data.tmpl
+    filename: meta-data
+
+# Minimal. openssh-server is installed via the autoinstall ssh section; curl is
+# needed in the target by the late-command that fetches the post script.
+packages:
+  - curl
+
+exclude_packages: []
+
+timezone: Asia/Tokyo
+ntp_server: ntp.nict.jp
+keyboard: jp
+language: en_US.UTF-8
+
+setup:
+  post:
+    - templates/setup/post/ssh.sh.tmpl

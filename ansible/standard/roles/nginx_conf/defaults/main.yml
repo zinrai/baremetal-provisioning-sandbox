@@ -1,0 +1,5 @@
+---
+nginx_conf:
+  docroot: "/var/www/html"
+  # Where /configs and /nodes are proxied to (the metal-install server).
+  metal_install_addr: "10.0.10.31:8080"

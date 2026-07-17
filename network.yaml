@@ -1,0 +1,24 @@
+# Bridges for the baremetal-provisioning-sandbox, for github.com/zinrai/netshed
+#
+#   sudo netshed create -config network.yaml
+#   sudo netshed delete -config network.yaml
+#
+# prov0: the provisioning network. fleet-dhcpd serves DHCP here and the QEMU
+#        baremetal VM PXE-boots on it. masquerade gives outbound NAT so the
+#        containers (apt / metal-bootstrap fetches) and the installer (Debian
+#        online mirror) can reach the internet.
+# svc0:  the service network. After install the baremetal VM is moved here.
+#        No DHCP, isolated (no NAT), standing in for a production segment.
+
+networks:
+  - name: "prov0"
+    type: "bridge"
+    subnet: "10.0.10.0/24"
+    gateway: "10.0.10.1/24"
+    masquerade: true
+
+  - name: "svc0"
+    type: "bridge"
+    subnet: "10.0.20.0/24"
+    gateway: "10.0.20.1/24"
+    masquerade: false

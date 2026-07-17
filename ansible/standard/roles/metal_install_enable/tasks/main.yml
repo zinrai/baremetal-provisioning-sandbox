@@ -1,0 +1,11 @@
+---
+# Enable only. metal-install cannot start until the deploy layer has created the
+# `current` symlink and a release, so the first start (and every restart) is
+# done by deploy/deploy-metal-install-data.sh, not here.
+- name: Ensure metal-install is enabled
+  ansible.builtin.systemd:
+    name: metal-install
+    enabled: true
+    daemon_reload: true
+  tags:
+    - metal_install_enable

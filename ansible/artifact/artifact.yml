@@ -1,0 +1,9 @@
+---
+- hosts: artifact
+  become: true
+  roles:
+    - apt_update
+    - nginx
+    - nginx_conf
+    - metal_bootstrap
+    - metal_bootstrap_conf

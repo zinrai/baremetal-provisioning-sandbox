@@ -1,0 +1,8 @@
+---
+# consul_cluster = every node that runs a consul agent: the 3 consul servers
+# and the consul clients co-located on the fleet-dhcpd nodes. They all join
+# through this list.
+consul_retry_join:
+  - 10.0.10.11
+  - 10.0.10.12
+  - 10.0.10.13

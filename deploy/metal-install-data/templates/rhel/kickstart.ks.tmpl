@@ -1,0 +1,38 @@
+# Kickstart for RHEL-family.
+# Rendered per-node. This file contains only declarations. All post-install
+# logic lives in scripts that are fetched and executed from %post.
+
+rootpw --iscrypted '{{ .Spec.RootPasswordHash }}'
+eula --agreed
+keyboard --vckeymap={{ .OS.Keyboard }}
+lang {{ .OS.Language }}
+network --bootproto=dhcp --activate
+
+{{ .Machine.Partition.Kickstart }}
+
+services --disabled=auditd,rpcbind,rpcbind.socket
+firewall --disabled
+selinux --disabled
+text
+timezone {{ .OS.Timezone }} --utc
+timesource --ntp-server {{ .OS.NTPServer }}
+zerombr
+bootloader
+
+# Power off when the install finishes.
+poweroff
+
+%packages
+{{- range .OS.Packages }}
+{{ . }}
+{{- end }}
+{{- range .OS.ExcludePackages }}
+-{{ . }}
+{{- end }}
+%end
+
+%post --erroronfail
+set -eu
+BASE={{ .Env.InstallServer.HTTPBase }}/configs/{{ .Spec.NodeID }}/post
+curl -fsSL $BASE/ssh.sh | sh
+%end

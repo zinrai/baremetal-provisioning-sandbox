@@ -1,0 +1,5 @@
+---
+metal_bootstrap:
+  version: "0.2.0"
+  url: "https://github.com/zinrai/metal-bootstrap/releases/download/v0.2.0/metal-bootstrap_0.2.0_linux_amd64"
+  bin: "/usr/local/bin/metal-bootstrap"

@@ -1,0 +1,51 @@
+---
+- name: Ensure docroot exists
+  ansible.builtin.file:
+    path: "{{ nginx_conf.docroot }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  tags:
+    - nginx_conf
+
+- name: Ensure provisioning site is configured
+  ansible.builtin.template:
+    src: "etc/nginx/sites-available/provisioning.j2"
+    dest: "/etc/nginx/sites-available/provisioning"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - reload nginx
+  tags:
+    - nginx_conf
+
+- name: Ensure provisioning site is enabled
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/provisioning"
+    dest: "/etc/nginx/sites-enabled/provisioning"
+    state: link
+  notify:
+    - reload nginx
+  tags:
+    - nginx_conf
+
+- name: Ensure the default site is disabled
+  ansible.builtin.file:
+    path: "/etc/nginx/sites-enabled/default"
+    state: absent
+  notify:
+    - reload nginx
+  tags:
+    - nginx_conf
+
+- name: Ensure bootstrap.ipxe is served
+  ansible.builtin.template:
+    src: "bootstrap.ipxe.j2"
+    dest: "{{ nginx_conf.docroot }}/bootstrap.ipxe"
+    owner: root
+    group: root
+    mode: "0644"
+  tags:
+    - nginx_conf

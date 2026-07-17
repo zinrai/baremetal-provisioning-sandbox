@@ -1,0 +1,6 @@
+# Cloud-init NoCloud meta-data for {{ .Spec.NodeID }}.
+#
+# autoinstall requires meta-data to exist next to user-data, but the
+# only field cloud-init strictly needs from it is instance-id. Using
+# the node_id as instance-id keeps the value stable per host.
+instance-id: {{ .Spec.NodeID }}

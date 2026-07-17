@@ -1,0 +1,5 @@
+[artifact]
+artifact ansible_host=10.0.10.41
+
+[artifact:vars]
+ansible_user=root

@@ -1,0 +1,17 @@
+---
+fleet_dhcpd_conf:
+  kv_prefix: "fleet-dhcpd/clusters/provisioning"
+  # Interface *inside* the container. declxc renders lxc.net.0, which the
+  # container sees as eth0.
+  interface: "eth0"
+  # DHCP config stored in Consul KV, read on startup and watched for changes.
+  subnet: "10.0.10.0/24"
+  range_start: "10.0.10.100"
+  range_end: "10.0.10.200"
+  router: "10.0.10.1"
+  dns:
+    - "1.1.1.1"
+    - "8.8.8.8"
+  lease_time: "1h"
+  # iPXE boot chain served by the artifact node's nginx.
+  boot_url: "http://10.0.10.41/bootstrap.ipxe"

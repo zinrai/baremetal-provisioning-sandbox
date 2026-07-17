@@ -1,0 +1,11 @@
+---
+- name: Ensure metal-bootstrap binary is installed
+  ansible.builtin.get_url:
+    url: "{{ metal_bootstrap.url }}"
+    dest: "{{ metal_bootstrap.bin }}"
+    owner: root
+    group: root
+    mode: "0755"
+    force: false
+  tags:
+    - metal_bootstrap

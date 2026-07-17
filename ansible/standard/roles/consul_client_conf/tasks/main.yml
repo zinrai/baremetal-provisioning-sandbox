@@ -1,0 +1,12 @@
+---
+- name: Ensure consul client configuration is set
+  ansible.builtin.template:
+    src: "etc/consul.d/client.hcl.j2"
+    dest: "/etc/consul.d/client.hcl"
+    owner: consul
+    group: consul
+    mode: "0644"
+  notify:
+    - reload consul
+  tags:
+    - consul_client_conf

@@ -55,22 +55,39 @@ install server is a separate step (`driver/register.py`).
 
 ## Flow
 
-1. **Artifact prep.** metal-bootstrap fetches the Debian netboot kernel and
-   initrd into the artifact node's nginx docroot under `images/debian/13/`.
-2. **Register.** `driver/register.py` POSTs an InstallSpec for the VM to
-   metal-install.
-3. **Boot.** The VM powers on and PXE-boots. fleet-dhcpd answers with an address
-   and a `boot_url` of `http://10.0.10.41/bootstrap.ipxe`.
-4. **Chain.** iPXE fetches `bootstrap.ipxe`, which chains to
-   `http://10.0.10.41/configs/<node_id>/boot.ipxe` rendered by metal-install.
-5. **Install.** boot.ipxe loads kernel and initrd from the artifact node and
-   preseed from metal-install; the installer partitions, installs the base
-   system, and runs the post scripts.
-6. **Power off and deregister.** The installer powers the VM off at the end of
-   the install. The driver then DELETEs the node from metal-install
-   (`deregister.py`); metal-install does not track completion itself.
-7. **Commission.** `netboot-guest up` boots the installed disk on `svc0`, the
-   service network.
+With the substrate up and the boot images fetched by metal-bootstrap into the
+artifact docroot, a node goes from registration to running on the service
+network like this:
+
+```mermaid
+sequenceDiagram
+  participant D as driver
+  participant G as QEMU VM (netboot-guest)
+  participant F as fleet-dhcpd
+  participant C as consul KV
+  participant A as artifact (nginx)
+  participant M as metal-install
+
+  Note over A,M: artifact (nginx) is the HTTP front and reverse-proxies /configs and /nodes to metal-install
+  D->>M: register.py POST /nodes
+  M->>M: render per-node artifacts
+  Note over G,F: netboot-guest powers the VM on, PXE-boots it on prov0
+  G->>F: DHCP discover
+  F->>C: read DHCP config
+  F->>G: DHCP offer + boot_url
+  G->>A: GET bootstrap.ipxe
+  G->>A: chain to the per-node boot.ipxe (/configs)
+  A->>M: reverse-proxy /configs
+  M->>A: rendered boot.ipxe
+  A->>G: boot.ipxe
+  G->>A: kernel, initrd, ISO (/images) and preseed (/configs)
+  G->>G: unattended install, post scripts, power off
+  D->>M: deregister.py DELETE /nodes
+  Note over G: netboot-guest moves the VM to svc0, it boots from disk
+```
+
+metal-install does not track completion: deregistering the node after the
+install is the driver's job, not the installer's.
 
 ## Design decisions
 

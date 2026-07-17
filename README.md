@@ -2,7 +2,30 @@
 
 A bare-metal provisioning system (metal-install, metal-bootstrap, fleet-dhcpd)
 reproduced on LXC containers, driving a QEMU virtual machine through a real
-unattended install. See [DESIGN.md](DESIGN.md) for the architecture.
+unattended install. See [DESIGN.md](DESIGN.md) for the install sequence and the
+node/network detail.
+
+```mermaid
+flowchart TB
+  guest["QEMU baremetal VM<br/>(device under test)"]
+
+  subgraph host["one LXC host"]
+    direction TB
+    subgraph prov0["prov0 (10.0.10.0/24, NAT) - provisioning + DHCP"]
+      fd["fleet-dhcpd x3<br/>HA DHCP + consul client"]
+      cs["consul-server x3<br/>KV: leases + config"]
+      mi["metal-install<br/>renders per-node artifacts"]
+      art["artifact<br/>nginx + metal-bootstrap"]
+    end
+    svc0["svc0 (10.0.20.0/24, isolated)<br/>service network, no DHCP"]
+  end
+
+  guest -->|"DHCP + boot_url"| fd
+  fd <-->|"leases / config"| cs
+  guest -->|"HTTP: iPXE + boot images + configs"| art
+  art -->|"reverse-proxy /configs, /nodes"| mi
+  guest ==>|"installed, powered off, moved"| svc0
+```
 
 ## Prerequisites
 

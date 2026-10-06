@@ -5,7 +5,7 @@
   serial: 1
   roles:
     - apt_update
+    - ca-certificates
     - apt_hashicorp_repository
-    - consul
     - consul_server_conf
     - consul_enable

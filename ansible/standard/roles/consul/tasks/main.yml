@@ -9,9 +9,12 @@
   tags:
     - consul
 
+# update_cache here, not only in apt_update: that ran before the HashiCorp
+# repository was added.
 - name: Ensure consul is installed
   ansible.builtin.apt:
     name: "consul={{ consul.version }}*"
     state: present
+    update_cache: true
   tags:
     - consul

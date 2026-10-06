@@ -3,6 +3,5 @@
   become: true
   roles:
     - apt_update
-    - metal_install
-    - metal_install_conf
-    - metal_install_enable
+    - metal-install_conf
+    - metal-install_enable

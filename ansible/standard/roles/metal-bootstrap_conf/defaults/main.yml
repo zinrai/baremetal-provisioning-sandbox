@@ -1,0 +1,4 @@
+---
+# metal_bootstrap_conf, not the role's name: Jinja reads a hyphen as a minus.
+metal_bootstrap_conf:
+  config: "/etc/metal-bootstrap/config.yaml"

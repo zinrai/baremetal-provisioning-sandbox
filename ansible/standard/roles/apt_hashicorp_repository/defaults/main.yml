@@ -1,8 +1,6 @@
 ---
 apt_hashicorp_repository:
-  # The /gpg endpoint serves an ASCII-armored key, so the keyring is .asc (apt
-  # reads an armored signed-by keyring directly); a .gpg name implies the
-  # dearmored binary form and fails to verify.
+  # .asc, not .gpg: the /gpg endpoint serves an armored key, which apt reads
+  # as is from a .asc file, and fails to verify from a .gpg one.
   keyring: "/usr/share/keyrings/hashicorp-archive-keyring.asc"
   key_url: "https://apt.releases.hashicorp.com/gpg"
-  repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.asc] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"

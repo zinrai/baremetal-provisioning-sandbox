@@ -1,0 +1,7 @@
+---
+- name: Ensure ca-certificates is installed
+  ansible.builtin.apt:
+    name: ca-certificates
+    state: present
+  tags:
+    - ca-certificates

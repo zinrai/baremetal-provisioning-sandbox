@@ -1,12 +1,12 @@
 targets:
   - name: almalinux-10
     files:
-      - url: https://repo.almalinux.org/almalinux/10/BaseOS/x86_64/os/images/pxeboot/vmlinuz
+      - url: https://vault.almalinux.org/10.0/BaseOS/x86_64/os/images/pxeboot/vmlinuz
         dest: /var/www/html/images/almalinux/10.0/images/pxeboot/vmlinuz
-        sha256: 90ee8394588e78eed5136fa484a2b49c6a9e70960356b046c1b90a5a6f449f7d
-      - url: https://repo.almalinux.org/almalinux/10/BaseOS/x86_64/os/images/pxeboot/initrd.img
+        sha256: 1e93b0129511f8fcea90b2c32f1eb554d9014b3b0b66e2cdb30cea6e3f230dee
+      - url: https://vault.almalinux.org/10.0/BaseOS/x86_64/os/images/pxeboot/initrd.img
         dest: /var/www/html/images/almalinux/10.0/images/pxeboot/initrd.img
-        sha256: e1b5b7f627a0d2982981521e3dd550a8f51e40d08b3e9318763d2c7ce273b3a9
+        sha256: 27bd2b2003c2970ea94eb44318d9e24d2858725340e8fff7536960c21c35a3a8
 
   - name: ubuntu-24.04
     files:
